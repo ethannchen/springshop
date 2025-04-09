@@ -1,0 +1,672 @@
+<<<BEGIN FILE>>>
+path: src/.DS_Store
+content: |
+  <<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/test/java/com/ethann/springshop/SpringShopApplicationTests.java
+content: |
+  package com.ethann.springshop;
+  
+  import org.junit.jupiter.api.Test;
+  import org.springframework.boot.test.context.SpringBootTest;
+  
+  @SpringBootTest
+  class SpringShopApplicationTests {
+  
+  	@Test
+  	void contextLoads() {
+  	}
+  
+  }
+<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/.DS_Store
+content: |
+  <<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/resources/application.properties
+content: |
+  spring.application.name=spring-shop
+  spring.datasource.url=jdbc:postgresql://localhost:5432/springshop
+  spring.datasource.username=postgres
+  spring.datasource.password=postgres
+  spring.jpa.hibernate.ddl-auto=update
+  spring.jpa.show-sql=true
+  spring.jpa.properties.hibernate.format_sql=true
+  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+  server.port=8080
+  # Logging
+  logging.level.com.ethann.springshop=INFO
+  logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/.DS_Store
+content: |
+  <<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/.DS_Store
+content: |
+  <<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/.DS_Store
+content: |
+  
+  
+  
+  <<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/dto/ProductRequest.java
+content: |
+  package com.ethann.springshop.dto;
+  
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  import java.math.BigDecimal;
+  
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class ProductRequest {
+    private String name;
+    private String description;
+    private String skuCode;
+    private BigDecimal price;
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/dto/OrderResponse.java
+content: |
+  package com.ethann.springshop.dto;
+  
+  import com.ethann.springshop.model.Order.OrderStatus;
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  import java.math.BigDecimal;
+  import java.time.LocalDateTime;
+  
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class OrderResponse {
+    private String orderNumber;
+    private String skuCode;
+    private BigDecimal price;
+    private Integer quantity;
+    private BigDecimal totalAmount;
+    private LocalDateTime orderDate;
+    private OrderStatus status;
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/dto/ProductResponse.java
+content: |
+  package com.ethann.springshop.dto;
+  
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  import java.math.BigDecimal;
+  
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class ProductResponse {
+    private String id;
+    private String name;
+    private String description;
+    private String skuCode;
+    private BigDecimal price;
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/dto/OrderRequest.java
+content: |
+  package com.ethann.springshop.dto;
+  
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  import java.math.BigDecimal;
+  
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class OrderRequest {
+    private String skuCode;
+    private Integer quantity;
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/repository/OrderRepository.java
+content: |
+  package com.ethann.springshop.repository;
+  
+  import com.ethann.springshop.model.Order;
+  import org.springframework.data.jpa.repository.JpaRepository;
+  
+  import java.util.Optional;
+  
+  public interface OrderRepository extends JpaRepository<Order, Long> {
+    Optional<Order> findByOrderNumber(String orderNumber);
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/repository/ProductRepository.java
+content: |
+  package com.ethann.springshop.repository;
+  
+  import com.ethann.springshop.model.Product;
+  import org.springframework.data.jpa.repository.JpaRepository;
+  
+  import java.util.Optional;
+  
+  public interface ProductRepository extends JpaRepository<Product, String> {
+    Optional<Product> findBySkuCode(String skuCode);
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/repository/InventoryRepository.java
+content: |
+  package com.ethann.springshop.repository;
+  
+  import com.ethann.springshop.model.Inventory;
+  import org.springframework.data.jpa.repository.JpaRepository;
+  
+  import java.util.Optional;
+  
+  public interface InventoryRepository extends JpaRepository<Inventory, Long> {
+    Optional<Inventory> findBySkuCode(String skuCode);
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/.DS_Store
+content: |
+  <<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/SpringShopApplication.java
+content: |
+  package com.ethann.springshop;
+  
+  import org.springframework.boot.SpringApplication;
+  import org.springframework.boot.autoconfigure.SpringBootApplication;
+  
+  @SpringBootApplication
+  public class SpringShopApplication {
+  
+  	public static void main(String[] args) {
+  		SpringApplication.run(SpringShopApplication.class, args);
+  	}
+  
+  }
+<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/util/OrderNumberGenerator.java
+content: |
+  package com.ethann.springshop.util;
+  
+  import org.springframework.stereotype.Component;
+  
+  import java.time.LocalDateTime;
+  import java.time.format.DateTimeFormatter;
+  import java.util.Random;
+  
+  @Component
+  public class OrderNumberGenerator {
+  
+    public String generateOrderNumber() {
+      String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+      String randomSuffix = String.format("%04d", new Random().nextInt(10000));
+      return "ORD-" + timestamp + "-" + randomSuffix;
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/config/AppConfig.java
+content: |
+  package com.ethann.springshop.config;
+  
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.context.annotation.Configuration;
+  import org.springframework.web.servlet.config.annotation.CorsRegistry;
+  import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+  
+  @Configuration
+  public class AppConfig {
+  
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+      return new WebMvcConfigurer() {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+          registry.addMapping("/api/**")
+              .allowedOrigins("http://localhost:3000") // Frontend URL
+              .allowedMethods("GET", "POST", "PUT", "DELETE")
+              .allowedHeaders("*");
+        }
+      };
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/controller/ProductController.java
+content: |
+  package com.ethann.springshop.controller;
+  
+  import com.ethann.springshop.dto.ProductRequest;
+  import com.ethann.springshop.dto.ProductResponse;
+  import com.ethann.springshop.service.ProductService;
+  import lombok.RequiredArgsConstructor;
+  import org.springframework.http.HttpStatus;
+  import org.springframework.web.bind.annotation.*;
+  
+  import java.util.List;
+  
+  @RestController
+  @RequestMapping("/api/products")
+  @RequiredArgsConstructor
+  public class ProductController {
+    private final ProductService productService;
+  
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductResponse createProduct(@RequestBody ProductRequest productRequest) {
+      return productService.createProduct(productRequest);
+    }
+  
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductResponse> getAllProducts() {
+      return productService.getAllProducts();
+    }
+  
+    @GetMapping("/{skuCode}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResponse getProductBySkuCode(@PathVariable String skuCode) {
+      return productService.getProductBySkuCode(skuCode);
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/controller/OrderController.java
+content: |
+  package com.ethann.springshop.controller;
+  
+  import com.ethann.springshop.dto.OrderRequest;
+  import com.ethann.springshop.dto.OrderResponse;
+  import com.ethann.springshop.service.OrderService;
+  import lombok.RequiredArgsConstructor;
+  import org.springframework.http.HttpStatus;
+  import org.springframework.web.bind.annotation.*;
+  
+  @RestController
+  @RequestMapping("/api/orders")
+  @RequiredArgsConstructor
+  public class OrderController {
+    private final OrderService orderService;
+  
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderResponse placeOrder(@RequestBody OrderRequest orderRequest) {
+      return orderService.placeOrder(orderRequest);
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/controller/InventoryController.java
+content: |
+  package com.ethann.springshop.controller;
+  
+  import com.ethann.springshop.service.InventoryService;
+  import lombok.RequiredArgsConstructor;
+  import org.springframework.http.HttpStatus;
+  import org.springframework.web.bind.annotation.*;
+  
+  @RestController
+  @RequestMapping("/api/inventory")
+  @RequiredArgsConstructor
+  public class InventoryController {
+    private final InventoryService inventoryService;
+  
+    @GetMapping("/{skuCode}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean isInStock(@PathVariable String skuCode, @RequestParam Integer quantity) {
+      return inventoryService.isInStock(skuCode, quantity);
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/model/Order.java
+content: |
+  package com.ethann.springshop.model;
+  
+  import jakarta.persistence.*;
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  import java.math.BigDecimal;
+  import java.time.LocalDateTime;
+  
+  @Entity
+  @Table(name = "orders")
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String orderNumber;
+    private String skuCode;
+    private BigDecimal price;
+    private Integer quantity;
+    private LocalDateTime orderDate;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+  
+    public enum OrderStatus {
+      PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/model/Product.java
+content: |
+  package com.ethann.springshop.model;
+  
+  import jakarta.persistence.*;
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  import java.math.BigDecimal;
+  
+  @Entity
+  @Table(name = "products")
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class Product {
+    @Id
+    private String id;
+    private String name;
+    private String description;
+    private String skuCode;
+    private BigDecimal price;
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/model/Inventory.java
+content: |
+  package com.ethann.springshop.model;
+  
+  import jakarta.persistence.*;
+  import lombok.AllArgsConstructor;
+  import lombok.Builder;
+  import lombok.Data;
+  import lombok.NoArgsConstructor;
+  
+  @Entity
+  @Table(name = "inventory")
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class Inventory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true)
+    private String skuCode;
+    private Integer quantity;
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/service/ProductService.java
+content: |
+  package com.ethann.springshop.service;
+  
+  import com.ethann.springshop.dto.ProductRequest;
+  import com.ethann.springshop.dto.ProductResponse;
+  import com.ethann.springshop.exception.ResourceNotFoundException;
+  import com.ethann.springshop.model.Product;
+  import com.ethann.springshop.repository.ProductRepository;
+  import lombok.RequiredArgsConstructor;
+  import lombok.extern.slf4j.Slf4j;
+  import org.springframework.stereotype.Service;
+  import org.springframework.transaction.annotation.Transactional;
+  
+  import java.util.List;
+  import java.util.UUID;
+  import java.util.stream.Collectors;
+  
+  @Service
+  @RequiredArgsConstructor
+  @Slf4j
+  public class ProductService {
+    private final ProductRepository productRepository;
+  
+    @Transactional
+    public ProductResponse createProduct(ProductRequest productRequest) {
+      log.info("Creating new product with SKU: {}", productRequest.getSkuCode());
+  
+      Product product = Product.builder()
+          .id(UUID.randomUUID().toString())
+          .name(productRequest.getName())
+          .description(productRequest.getDescription())
+          .skuCode(productRequest.getSkuCode())
+          .price(productRequest.getPrice())
+          .build();
+  
+      Product savedProduct = productRepository.save(product);
+      log.info("Product created successfully with ID: {}", savedProduct.getId());
+  
+      return mapToProductResponse(savedProduct);
+    }
+  
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getAllProducts() {
+      log.info("Fetching all products");
+      return productRepository.findAll().stream()
+          .map(this::mapToProductResponse)
+          .collect(Collectors.toList());
+    }
+  
+    @Transactional(readOnly = true)
+    public ProductResponse getProductBySkuCode(String skuCode) {
+      log.info("Fetching product with SKU: {}", skuCode);
+      Product product = productRepository.findBySkuCode(skuCode)
+          .orElseThrow(() -> new ResourceNotFoundException("Product not found with SKU: " + skuCode));
+      return mapToProductResponse(product);
+    }
+  
+    private ProductResponse mapToProductResponse(Product product) {
+      return ProductResponse.builder()
+          .id(product.getId())
+          .name(product.getName())
+          .description(product.getDescription())
+          .skuCode(product.getSkuCode())
+          .price(product.getPrice())
+          .build();
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/service/OrderService.java
+content: |
+  package com.ethann.springshop.service;
+  
+  import com.ethann.springshop.dto.OrderRequest;
+  import com.ethann.springshop.dto.OrderResponse;
+  import com.ethann.springshop.exception.ProductOutOfStockException;
+  import com.ethann.springshop.exception.ResourceNotFoundException;
+  import com.ethann.springshop.model.Order;
+  import com.ethann.springshop.model.Product;
+  import com.ethann.springshop.repository.OrderRepository;
+  import com.ethann.springshop.repository.ProductRepository;
+  import com.ethann.springshop.util.OrderNumberGenerator;
+  import lombok.RequiredArgsConstructor;
+  import lombok.extern.slf4j.Slf4j;
+  import org.springframework.stereotype.Service;
+  import org.springframework.transaction.annotation.Transactional;
+  
+  import java.time.LocalDateTime;
+  
+  @Service
+  @RequiredArgsConstructor
+  @Slf4j
+  public class OrderService {
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
+    private final InventoryService inventoryService;
+    private final OrderNumberGenerator orderNumberGenerator;
+  
+    @Transactional
+    public OrderResponse placeOrder(OrderRequest orderRequest) {
+      log.info("Placing order for product with SKU: {}, quantity: {}",
+          orderRequest.getSkuCode(), orderRequest.getQuantity());
+  
+      // Check if product exists
+      Product product = productRepository.findBySkuCode(orderRequest.getSkuCode())
+          .orElseThrow(() -> new ResourceNotFoundException("Product not found with SKU: " + orderRequest.getSkuCode()));
+  
+      // Check if product is in stock
+      boolean isInStock = inventoryService.isInStock(orderRequest.getSkuCode(), orderRequest.getQuantity());
+  
+      if (!isInStock) {
+        throw new ProductOutOfStockException("Product with SKU: " + orderRequest.getSkuCode() + " is out of stock");
+      }
+  
+      // Create and save order
+      Order order = Order.builder()
+          .orderNumber(orderNumberGenerator.generateOrderNumber())
+          .skuCode(orderRequest.getSkuCode())
+          .price(product.getPrice())
+          .quantity(orderRequest.getQuantity())
+          .orderDate(LocalDateTime.now())
+          .status(Order.OrderStatus.CONFIRMED)
+          .build();
+  
+      Order savedOrder = orderRepository.save(order);
+  
+      // Update inventory
+      inventoryService.updateStock(orderRequest.getSkuCode(), orderRequest.getQuantity());
+  
+      log.info("Order placed successfully with order number: {}", savedOrder.getOrderNumber());
+  
+      return OrderResponse.builder()
+          .orderNumber(savedOrder.getOrderNumber())
+          .skuCode(savedOrder.getSkuCode())
+          .price(savedOrder.getPrice())
+          .quantity(savedOrder.getQuantity())
+          .totalAmount(savedOrder.getPrice().multiply(new java.math.BigDecimal(savedOrder.getQuantity())))
+          .orderDate(savedOrder.getOrderDate())
+          .status(savedOrder.getStatus())
+          .build();
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/service/InventoryService.java
+content: |
+  package com.ethann.springshop.service;
+  
+  import com.ethann.springshop.exception.ResourceNotFoundException;
+  import com.ethann.springshop.model.Inventory;
+  import com.ethann.springshop.repository.InventoryRepository;
+  import lombok.RequiredArgsConstructor;
+  import lombok.extern.slf4j.Slf4j;
+  import org.springframework.stereotype.Service;
+  import org.springframework.transaction.annotation.Transactional;
+  
+  @Service
+  @RequiredArgsConstructor
+  @Slf4j
+  public class InventoryService {
+    private final InventoryRepository inventoryRepository;
+  
+    @Transactional(readOnly = true)
+    public boolean isInStock(String skuCode, Integer quantityRequired) {
+      log.info("Checking if product with SKU: {} is in stock with quantity: {}", skuCode, quantityRequired);
+      return inventoryRepository.findBySkuCode(skuCode)
+          .map(inventory -> inventory.getQuantity() >= quantityRequired)
+          .orElse(false);
+    }
+  
+    @Transactional
+    public void updateStock(String skuCode, Integer quantityToReduce) {
+      log.info("Updating stock for product with SKU: {}, reducing by: {}", skuCode, quantityToReduce);
+      Inventory inventory = inventoryRepository.findBySkuCode(skuCode)
+          .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for SKU: " + skuCode));
+  
+      inventory.setQuantity(inventory.getQuantity() - quantityToReduce);
+      inventoryRepository.save(inventory);
+      log.info("Stock updated successfully for SKU: {}, new quantity: {}", skuCode, inventory.getQuantity());
+    }
+  }
+<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/exception/ResourceNotFoundException.java
+content: |
+  package com.ethann.springshop.exception;
+  
+  import org.springframework.http.HttpStatus;
+  import org.springframework.web.bind.annotation.ResponseStatus;
+  
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+      super(message);
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/exception/GlobalExceptionHandler.java
+content: |
+  package com.ethann.springshop.exception;
+  
+  import org.springframework.http.HttpStatus;
+  import org.springframework.http.ResponseEntity;
+  import org.springframework.web.bind.annotation.ControllerAdvice;
+  import org.springframework.web.bind.annotation.ExceptionHandler;
+  
+  import java.time.LocalDateTime;
+  import java.util.LinkedHashMap;
+  import java.util.Map;
+  
+  @ControllerAdvice
+  public class GlobalExceptionHandler {
+  
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
+      Map<String, Object> body = new LinkedHashMap<>();
+      body.put("timestamp", LocalDateTime.now());
+      body.put("message", ex.getMessage());
+      body.put("status", HttpStatus.NOT_FOUND.value());
+  
+      return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+  
+    @ExceptionHandler(ProductOutOfStockException.class)
+    public ResponseEntity<Object> handleProductOutOfStockException(ProductOutOfStockException ex) {
+      Map<String, Object> body = new LinkedHashMap<>();
+      body.put("timestamp", LocalDateTime.now());
+      body.put("message", ex.getMessage());
+      body.put("status", HttpStatus.BAD_REQUEST.value());
+  
+      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+  }<<<END FILE>>>
+<<<BEGIN FILE>>>
+path: src/main/java/com/ethann/springshop/exception/ProductOutOfStockException.java
+content: |
+  package com.ethann.springshop.exception;
+  
+  import org.springframework.http.HttpStatus;
+  import org.springframework.web.bind.annotation.ResponseStatus;
+  
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public class ProductOutOfStockException extends RuntimeException {
+    public ProductOutOfStockException(String message) {
+      super(message);
+    }
+  }<<<END FILE>>>
